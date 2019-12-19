@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -22,6 +23,7 @@ func Test(affichage http.ResponseWriter, requete *http.Request) {
 }
 
 func main() {
+	fmt.Println("coucou")
 	http.HandleFunc("/test", Test)
 	log.Fatal(http.ListenAndServe("127.0.0.1:8080", nil))
 }

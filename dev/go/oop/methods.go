@@ -15,7 +15,3 @@ func (t *Test) Method1() int {
 	t.champ1 = 10
 	return t.champ1 + t.champ2
 }
-
-func (a Album) AlbumtoDB() error {
-
-}

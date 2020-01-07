@@ -1,0 +1,70 @@
+---
+# vmware_vm_facts
+# vmware_guest_facts
+# vmware_host_facts
+# vmware_cluster_facts
+# vmware_datastore_facts
+# vmware_host_capability_facts
+
+- name: Gather all registered virtual machines
+  vmware_vm_facts:
+    hostname: '{{ vc_host }}'
+    username: '{{ vc_user }}'
+    password: '{{ vc_pass }}'
+  delegate_to: localhost
+  register: vmfacts
+
+- debug:
+    var: vmfacts
+
+- name: Get facts from one specific VM
+  vmware_guest_facts:
+    hostname: '{{ vc_host }}'
+    username: '{{ vc_user }}'
+    password: '{{ vc_pass }}'
+    datacenter: "{{ dc_name }}"
+    validate_certs: no
+    uuid: 42052b63-6583-7156-7ec1-d84e3d2c0cec
+  delegate_to: localhost
+  register: guestfacts
+
+- debug:
+    var: guestfacts
+
+- name: Get facts from Hosts (Esxi)
+  vmware_host_facts:
+    hostname: '{{ vc_host }}'
+    username: '{{ vc_user }}'
+    password: '{{ vc_pass }}'
+    esxi_hostname: 172.21.152.50
+  delegate_to: localhost
+  register: hostfacts
+
+- debug:
+    var: hostfacts
+
+- name: Get facts from Cluster
+  vmware_cluster_facts:
+    hostname: '{{ vc_host }}'
+    username: '{{ vc_user }}'
+    password: '{{ vc_pass }}'
+    datacenter: "{{ dc_name }}"
+    validate_certs: no
+  delegate_to: localhost
+  register: clusterfacts
+
+- debug:
+    var: clusterfacts
+
+- name: Get datastores facts
+  vmware_datastore_facts:
+    hostname: '{{ vc_host }}'
+    username: '{{ vc_user }}'
+    password: '{{ vc_pass }}'
+    datacenter: "{{ dc_name }}"
+    validate_certs: no
+  delegate_to: localhost
+  register: datastorefacts
+
+- debug:
+    var: datastorefacts

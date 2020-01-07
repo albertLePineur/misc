@@ -1,0 +1,4 @@
+# VCenter
+vc_host: pcc-5-135-133-18.ovh.com
+dc_name: pcc-5-135-133-18_datacenter3339
+cl_name: Cluster1

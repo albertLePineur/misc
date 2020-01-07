@@ -1,0 +1,49 @@
+template_name: template_name
+cluster_array:
+  - vm_name: "<name>"
+    vm_guest_ip: "<ip>"
+    vm_guest_hostname: "<hostname>"
+    vm_esx_host: "<esx_host>"
+
+    disk_mgmt:
+      - size_gb: 50
+        type: thin
+        datastore: <datastore>
+        scsi_controller: 1
+        scsi_type: 'paravirtual'
+        unit_number: 0
+        state: present
+      - size_gb: 50
+        type: thin
+        datastore: <datastore>
+        scsi_controller: 1
+        unit_number: 1
+        state: present
+        scsi_type: 'paravirtual'
+
+
+#  - vm_name: "n2-poc-s1.queue.ovh.net"
+#    vm_guest_ip: "51.91.193.104"
+#    vm_guest_hostname: "n2-poc-s1"
+#    vm_esx_host: "172.21.152.51"
+
+#    disk_mgmt:
+#      - size_gb: 50
+#        type: thin
+#        datastore: pcc-008623
+#        scsi_controller: 1
+#        scsi_type: 'paravirtual'
+#        unit_number: 0
+#        state: present
+#      - size_gb: 50
+#        type: thin
+#        datastore: ssd-008946
+#        scsi_controller: 1
+#        unit_number: 1
+#        state: present
+#        scsi_type: 'paravirtual'
+
+vm_guest_dns_server:
+  - <ip_dns_server>
+vm_guest_gateway: '<ip_gateway>'
+vm_guest_netmask: '<ip_netmask>'

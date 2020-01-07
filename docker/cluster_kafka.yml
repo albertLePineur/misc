@@ -1,0 +1,65 @@
+version: '3.7'
+
+services:
+  zookeeper:
+    image: zookeeper:latest
+    container_name: zookeeper
+    hostname: zookeeper
+    networks:
+    - kafka_network
+
+  kafka_node1:
+    image: bitnami/kafka:latest
+    container_name: kafka-node1
+    hostname: kafka-node1
+    networks:
+    - kafka_network
+    environment:
+     - KAFKA_ZOOKEEPER_CONNECT=zookeeper.kafka_network:2181
+     - ALLOW_PLAINTEXT_LISTENER=yes
+     - KAFKA_BROKER_ID=1
+
+  kafka_node2:
+    image: bitnami/kafka:latest
+    container_name: kafka-node2
+    hostname: kafka-node2
+    networks:
+    - kafka_network
+    environment:
+     - KAFKA_ZOOKEEPER_CONNECT=zookeeper.kafka_network:2181
+     - ALLOW_PLAINTEXT_LISTENER=yes
+     - KAFKA_BROKER_ID=2
+
+  kafka_node3:
+    image: bitnami/kafka:latest
+    container_name: kafka-node3
+    hostname: kafka-node3
+    networks:
+    - kafka_network
+    environment:
+     - KAFKA_ZOOKEEPER_CONNECT=zookeeper.kafka_network:2181
+     - ALLOW_PLAINTEXT_LISTENER=yes
+     - KAFKA_BROKER_ID=3
+
+  kafka_manager:
+    image: hlebalbau/kafka-manager:latest
+    container_name: kafka-manager
+    hostname: kafka-manager
+    networks:
+    - kafka_network
+    environment:
+     - ZK_HOSTS=zookeeper.kafka_network:2181
+    ports:
+     - target: 9000
+       published: 8080
+       protocol: tcp
+       mode: host
+
+networks:
+  kafka_network:
+    driver: bridge
+    external:
+      name: kafka_network
+    ipam:
+      config:
+       - subnet: 192.168.1.0/24

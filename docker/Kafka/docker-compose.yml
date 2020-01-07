@@ -1,0 +1,44 @@
+version: '3.7'
+
+services:
+  zk1:
+    image: zookeeper:latest
+    container_name: zk1
+    hostname: zk1
+    networks:
+    - qaas_network
+    environment:
+     ZOO_MY_ID: 1
+     ZOO_SERVERS: server.1=0.0.0.0:2888:3888;2181 server.2=zk2.qaas_network:2888:3888;2181 server.3=zk3.qaas_network:2888:3888;2181
+
+  zk2:
+    image: zookeeper:latest
+    container_name: zk2
+    hostname: zk2
+    networks:
+    - qaas_network
+    environment:
+     ZOO_MY_ID: 2
+     ZOO_SERVERS: server.1=zk1.qaas_network:2888:3888;2181 server.2=0.0.0.0:2888:3888;2181 server.3=zk3.qaas_network:2888:3888;2181
+
+  zk3:
+    image: zookeeper:latest
+    container_name: zk3
+    hostname: zk3
+    networks:
+    - qaas_network
+    environment:
+     ZOO_MY_ID: 3
+     ZOO_SERVERS: server.1=zk1.qaas_network:2888:3888;2181 server.2=zk2.qaas_network:2888:3888;2181 server.3=0.0.0.0:2888:3888;2181
+
+  kafka:
+    image: <local_registry>/kafka:<version>
+    container_name: kafka
+    networks:
+    - qaas_network
+    volumes:
+    - /path/to/pv1:/opt/kafka/data1
+    - /path/to/pv2:/opt/kafka/data2
+    - /path/to/server.properties:/opt/kafka/config/server.properties
+    restart: always
+

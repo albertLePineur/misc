@@ -1,0 +1,63 @@
+---
+ - name: Create Pool Resource
+   vmware_resource_pool:
+     hostname: "{{ vc_host }}"
+     username: "{{ vc_user }}"
+     password: "{{ vc_pass }}"
+     datacenter: "{{ dc_name }}"
+     cluster: "{{ cl_name }}"
+     resource_pool: poc-pcc-s1
+     mem_shares: normal
+     mem_limit: -1
+     mem_reservation: 0
+     mem_expandable_reservations: yes
+     cpu_shares: normal
+     cpu_limit: -1
+     cpu_reservation: 0
+     cpu_expandable_reservations: yes
+     state: present
+   delegate_to: localhost
+
+ - name: Create a VM from the template
+   vmware_guest:
+     hostname: "{{ vc_host }}"
+     username: "{{ vc_user }}"
+     password: "{{ vc_pass }}"
+     datacenter: "{{ dc_name }}"
+     # cluster: "{{ cl_name }}"
+     esxi_hostname: "{{ item.vm_esx_host }}"
+     resource_pool: poc-pcc-s1
+     validate_certs: no
+     name: "{{ item.vm_name }}"
+     state: poweredon
+     folder: "{{ dc_name }}/vm"
+     template: "{{ template_name }}"
+     customization:
+       dns_servers:
+        - 213.186.33.99
+       domain: queue.ovh.net
+       hostname: "{{ item.vm_guest_hostname }}"
+     networks:
+       - name: VM Network
+         ip: "{{ item.vm_guest_ip }}"
+         netmask: "{{ vm_guest_netmask }}"
+         gateway: "{{ vm_guest_gateway }}"
+         type: static
+     wait_for_ip_address: yes
+     #disk: "{{ item.disk_mgmt }}"
+   delegate_to: localhost
+   with_items: "{{ cluster_array }}"
+
+ - name: Add disks to the newly created VMs
+   vmware_guest_disk:
+     hostname: "{{ vc_host }}"
+     username: "{{ vc_user }}"
+     password: "{{ vc_pass }}"
+     datacenter: "{{ dc_name }}"
+     validate_certs: no
+     name: "{{ item.vm_name }}"
+     disk: "{{ item.disk_mgmt }}"
+   delegate_to: localhost
+   with_items: "{{ cluster_array }}"
+
+

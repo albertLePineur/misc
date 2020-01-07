@@ -1,0 +1,10 @@
+---
+
+- hosts: localhost
+  gather_facts: no
+  vars_files:
+    - group_vars/main.yml
+    - secrets.yml
+  roles:
+    - vmware-deploy-template
+    #- vmware-inventory

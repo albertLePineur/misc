@@ -1,0 +1,14 @@
+---
+- hosts: all
+  gather_facts: yes
+  vars:
+    kafka_storage_disks:
+      - sdb
+      - sdc    
+  tasks:
+  - name: Launching the role for each disk
+    include_role:
+      name: initialization
+    vars:
+      disk: "{{ item }}"
+    with_items: "{{ kafka_storage_disks }}"

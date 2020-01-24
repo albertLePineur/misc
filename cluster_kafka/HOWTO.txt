@@ -1,0 +1,24 @@
+Mettre en place un cluster Kafka avec authentification SASL
+
+1 - Cluster ZK 3 nodes avec authent SASL_PLAiN entre les membres du quorum
+2 - Cluster Kafka qui vient dans un premier temps se connecter à ZK
+3 - Création de comptes en SCRAM-SHA-512 dans ZK via kafka-config.sh
+  ./bin/kafka-config.sh --zookeeper ${ZK_HOST}:${ZK_PORT}/${ZK_CHROOT} --alter --add-config "SCRAM-SHA-512=[iterations=8192,password=${SCRAM_PWD}]" --entity-type users --entity-name ${SCRAM_USER}
+  => On peut créer un compte "admin" puis N comptes normaux (ces derniers à posteriori)
+4 - Configuration du cluster Kafka pour utiliser désormais SCRAM
+
+!!!
+ZK1 <-> ZKN (connexions dans le quorum) SASL_PLAIN
+ZK_CLUSTER <-> KAFKA_CLUSTER SASL_PLAIN
+=> ZK n'implémente pas SCRAM au niveau de son jaas/sasl
+KAFKA1 <-> KAFKAN (connexions interbrokers) SASL_SCRAM-SHA-512
+CLIENT <-> KAFKA_CLUSTER SASL_SCRAM-SHA-512
+
+5 - Mise en place ACLs
+
+6 - Création d'une appli en go qui implémente SCRAM
+ -> Produire
+ -> Consommer
+ -> Admin (création, suppression, mise à jour et listing de topics)
+
+7 - Implémentation Kafka Stream via Faust (Python) and 

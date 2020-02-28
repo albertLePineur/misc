@@ -1,0 +1,5 @@
+---
+- name:
+  shell: echo "Hello world"
+  when: variables|default(false)|bool == true
+  

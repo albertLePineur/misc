@@ -1,20 +1,24 @@
 package main
 
 import (
-	"log"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	var routeur = mux.NewRouter()
-	var apiv1 = routeur.PathPrefix("/api/v1").Subrouter()
-	apiv1.HandleFunc("", MethodGet).Methods(http.MethodGet)
-	apiv1.HandleFunc("", MethodPost).Methods(http.MethodPost)
-	apiv1.HandleFunc("", MethodPut).Methods(http.MethodPut)
-	apiv1.HandleFunc("", MethodDelete).Methods(http.MethodDelete)
-	apiv1.HandleFunc("", MethodNotFound)
-	//apiv1.HandleFunc("/user/{userID}/comment/{commentID}", parametres).Methods(http.MethodGet)
-	log.Fatal(http.ListenAndServe("127.0.0.1:8080", routeur))
+	gin.SetMode(gin.ReleaseMode)
+	routeur := gin.New()
+	routeur.Use(gin.Logger())
+	routeur.Use(gin.Recovery())
+	authorized := routeur.Group("/", gin.BasicAuth(gin.Accounts{"admin": "admin"}))
+	authorized.GET("/coucou", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK, gin.H{
+			"first name": "thibaud",
+			"last name":  "coueffe",
+		})
+
+	})
+
+	routeur.Run(":8080")
 }

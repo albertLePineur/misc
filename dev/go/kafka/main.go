@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"strings"
 
@@ -19,6 +20,7 @@ var (
 	saslmethod = flag.String("saslmethod", "", "SASL method to use (PLAIN, SCRAM-SHA-256, SCRAM-SHA-512)")
 	user       = flag.String("user", "", "SASL User")
 	password   = flag.String("password", "", "SASL Password")
+	port       = flag.Int("port", 8080, "HTTP Rest API port")
 )
 
 func main() {
@@ -65,13 +67,13 @@ func main() {
 		}
 	}
 
-	saramaClient, errors := sarama.NewClient(strings.Split(*brokers, ","), cfg)
-	if errors != nil {
-		log.Fatal(errors.Error())
+	brokerList := strings.Split(*brokers, ",")
+
+	r := Router{
+		AdminUser:     "admin",
+		AdminPassword: "password",
 	}
 
-	KafkaAdmin(saramaClient)
-	ConsumerGroup(saramaClient, *group, *topics)
+	r.Routes().Run(fmt.Sprintf(":%d", *port))
 
-	defer func() { _ = saramaClient.Close() }()
 }

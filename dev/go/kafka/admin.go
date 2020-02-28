@@ -1,31 +1,58 @@
 package main
 
 import (
+	"fmt"
 	"log"
+
+	"github.com/gin-gonic/gin"
 
 	"github.com/Shopify/sarama"
 )
 
-// KafkaAdmin function
-func KafkaAdmin(cli sarama.Client) {
-	clusterAdmin, errors := sarama.NewClusterAdminFromClient(cli)
-	if errors != nil {
-		log.Fatal(errors.Error())
-	}
+// SaramaClient structure
+type SaramaClient struct {
+	SaramaConfig sarama.Config
+	Brokers      []string
+}
 
-	listTopics, errors := clusterAdmin.ListTopics()
+// Admin method
+func (cli *SaramaClient) Admin() sarama.ClusterAdmin {
+	client, err := sarama.NewClient(cli.Brokers, &cli.SaramaConfig)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	admin, err := sarama.NewClusterAdminFromClient(client)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	return admin
+}
+
+// ListTopics method
+func (cli *SaramaClient) ListTopics(admin sarama.ClusterAdmin) (gin.Context, error) {
+	listTopics, errors := admin.ListTopics()
 	if errors != nil {
-		log.Fatal(errors.Error())
+		return nil, errors
 	}
 	log.Print(listTopics)
-	if val, ok := listTopics[*topics]; ok {
-		log.Print("Le topic suivant est bien present : ", val)
-	} else {
-		log.Print("Le topic suivant n'existe pas et va etre cree : ", val)
+	return listTopics, nil
+}
 
-		errors = clusterAdmin.CreateTopic(*topics, &sarama.TopicDetail{NumPartitions: 5, ReplicationFactor: 1}, false)
-		if errors != nil {
-			log.Fatal("MAYDAY MAYDAY : ", errors)
-		}
+// DescribeTopics method
+func (cli *SaramaClient) DescribeTopics(admin sarama.ClusterAdmin, topicName []string) error {
+	describeTopic, errors := admin.DescribeTopics(topicName)
+	if errors != nil {
+		return errors
 	}
+	fmt.Println(describeTopic)
+	return nil
+}
+
+// CreateTopics method
+func (cli *SaramaClient) CreateTopics(admin sarama.ClusterAdmin, topicName string, topicDetail sarama.TopicDetail, valid bool) error {
+	err := admin.CreateTopic(topicName, &topicDetail, valid)
+	if err != nil {
+		return err
+	}
+	return nil
 }

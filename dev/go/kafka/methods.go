@@ -9,7 +9,9 @@ import (
 )
 
 var (
+	// SHA256 variable (for SCRAM-SHA256)
 	SHA256 scram.HashGeneratorFcn = func() hash.Hash { return sha256.New() }
+	// SHA512 variable (for SCRAM-SHA512)
 	SHA512 scram.HashGeneratorFcn = func() hash.Hash { return sha512.New() }
 )
 

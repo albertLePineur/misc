@@ -39,8 +39,8 @@ chown www-data:www-data /var/log/php && \
 ## => D'autrs extensions sont disponibles mais leur interet reste tres limite ou specifique
 #### Installation extensions via PECL
 # Redis
-#pecl config-set http_proxy http://tcoueffe:Problemchild1997@proxy-pc.na01.groupesigma.fr:8080 && \
-pear config-set http_proxy http://tcoueffe:Problemchild1997@proxy-pc.na01.groupesigma.fr:8080 && \
+#pecl config-set http_proxy http://usr:password@proxy_host:proxy_port && \
+pear config-set http_proxy http://usr:password@proxy_host:proxy_port && \
 printf "\n" | pecl install redis && \
 docker-php-ext-enable redis
 

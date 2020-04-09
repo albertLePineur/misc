@@ -1,5 +1,0 @@
-kafka_storage_disks:
- - sdb
- - sdc
-
-test_array: [ sdb ]

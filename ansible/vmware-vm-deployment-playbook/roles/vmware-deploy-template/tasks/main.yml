@@ -6,7 +6,7 @@
      password: "{{ vc_pass }}"
      datacenter: "{{ dc_name }}"
      cluster: "{{ cl_name }}"
-     resource_pool: poc-pcc-s1
+     resource_pool: resource_name
      mem_shares: normal
      mem_limit: -1
      mem_reservation: 0
@@ -26,7 +26,7 @@
      datacenter: "{{ dc_name }}"
      # cluster: "{{ cl_name }}"
      esxi_hostname: "{{ item.vm_esx_host }}"
-     resource_pool: poc-pcc-s1
+     resource_pool: resource_name
      validate_certs: no
      name: "{{ item.vm_name }}"
      state: poweredon
@@ -34,8 +34,8 @@
      template: "{{ template_name }}"
      customization:
        dns_servers:
-        - 213.186.33.99
-       domain: queue.ovh.net
+        - 1.2.3.4
+       domain: trololol.fr
        hostname: "{{ item.vm_guest_hostname }}"
      networks:
        - name: VM Network

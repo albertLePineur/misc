@@ -1,31 +1,26 @@
 ---
-- name: PCC - LVM - Check if disk /dev/sda is mentioned
-  fail:
-    msg: "THe SDA Disk mustn't be used for Kafka data storage, remove it from the list and relaunch the Playbook"
-  when: disk == 'sda'
-
 - name: Check if the FS is already created an ready to use
   stat:
-    path: "/mount/{{ disk }}/data/.ready"
+    path: "/app/{{ disk }}/data/.donoterase"
   register: fs_ready
 
-- name: PCC - LVM - Check if disk is present with fdisk
+- name: Check if disk is present with fdisk
   shell: fdisk -l /dev/{{ disk }}
   when: fs_ready.stat.exists == False
 
-- name: PCC - LVM - Create PV if none is present
+- name: Create PV if none is present
   shell: pvs /dev/{{ disk }} || pvcreate /dev/{{ disk }}
   when: fs_ready.stat.exists == False
 
-- name: PCC - LVM - Create VG if none is present
+- name: Create VG if none is present
   shell: vgs vg_{{ disk }} || vgcreate vg_{{ disk }} /dev/{{ disk }}
   when: fs_ready.stat.exists == False
 
-- name: PCC - LVM - Create LV if none is present
+- name: Create LV if none is present
   shell: lvs /dev/vg_{{ disk }}/lv_kafka || lvcreate vg_{{ disk }} --name=lv_kafka -l 100%FREE
   when: fs_ready.stat.exists == False
 
-- name: PCC - LVM - Create XFS filesystem if none is present
+- name: Create XFS filesystem if none is present
   filesystem:
     fstype: xfs
     dev: "/dev/mapper/vg_{{ disk }}-lv_kafka"
@@ -33,17 +28,17 @@
     force: no
   when: fs_ready.stat.exists == False
 
-- name: PCC - LVM - Create the Mountpoint on the server (/mount/sdX)
+- name: Create the Mountpoint on the server (/app/sdX)
   file:
-    path: "/mount/{{ disk }}"
+    path: "/app/{{ disk }}"
     state: directory
     mode: '0755'
   when: fs_ready.stat.exists == False
 
-- name: PCC - LVM - Mount the partition andd add en entry to FSTab
+- name: Mount the partition and add en entry to FSTab
   mount:
     src: "/dev/mapper/vg_{{ disk }}-lv_kafka"
-    path: "/mount/{{ item }}"
+    path: "/app/{{ item }}"
     state: mounted
     fstype: xfs
     backup: yes
@@ -51,14 +46,14 @@
     passno: "2"
   when: fs_ready.stat.exists == False
 
-- name: PCC - LVM - Create the directory /mount/sdX/data
+- name: Create the directory /app/sdX/data
   file:
-    path: "/mount/{{ disk }}/data"
+    path: "/app/{{ disk }}/data"
     state: directory
   when: fs_ready.stat.exists == False
 
-- name: PCC - LVM - Create the file /mount/sdX/data/.ready
+- name: Create the file /app/sdX/data/.donoterase
   file:
-    path: "/mount/{{ disk }}/data/.ready"
+    path: "/mount/{{ disk }}/data/.donoterase"
     state: file
   when: fs_ready.stat.exists == False

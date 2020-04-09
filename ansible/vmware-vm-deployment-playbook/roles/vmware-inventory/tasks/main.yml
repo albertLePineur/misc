@@ -24,7 +24,7 @@
     password: '{{ vc_pass }}'
     datacenter: "{{ dc_name }}"
     validate_certs: no
-    uuid: 42052b63-6583-7156-7ec1-d84e3d2c0cec
+    uuid: <my_uuid>
   delegate_to: localhost
   register: guestfacts
 
@@ -36,7 +36,7 @@
     hostname: '{{ vc_host }}'
     username: '{{ vc_user }}'
     password: '{{ vc_pass }}'
-    esxi_hostname: 172.21.152.50
+    esxi_hostname: <esx_hostname>
   delegate_to: localhost
   register: hostfacts
 

@@ -3,7 +3,9 @@ ZK="1.2.3.4:2181/my_chroot"
 KAFKA="1.2.3.4:9092"
 BROKER_ID=1
 
-### Basic admin stuff
+All the commands are run from $KAFKA_HOME/bin
+
+##### Basic admin stuff
 ./kafka-topics.sh [--zookeeper $ZK|--boostrap-server $KAFKA] --create --topic $TOPIC \
   --partitions 10 \
   --replication-factor 3
@@ -11,19 +13,25 @@ BROKER_ID=1
 ./kafka-topics.sh [--zookeeper $ZK|--boostrap-server $KAFKA] --describe [--topic $TOPIC]
 ./kafka-topics.sh [--zookeeper $ZK|--boostrap-server $KAFKA] --list
 
-### Manage cfg on broker level
-# List cfg
+##### Manage cfg on broker level
+###### List cfg
 ./kafka-configs.sh --bootstrap-server $KAFKA --entity-type brokers --entity-name $BROKER_ID --describe
-# Add cfg
+###### Add cfg
 ./kafka-configs.sh --bootstrap-server $KAFKA --entity-type brokers --entity-name $BROKER_ID --alter --add-config 'compression.type=gzip'
-# Del cfg
+###### Del cfg
 ./kafka-configs.sh --bootstrap-server $KAFKA --entity-type brokers --entity-name $BROKER_ID --alter --delete-config 'compression.type=gzip'
 
-### Manage cfg on topics level
-# List cfg
+##### Manage cfg on topics level
+###### List cfg
 ./kafka-configs.sh --zookeeper $ZK --entity-type topics --entity-name $TOPIC --describe
-# Add cfg
+###### Add cfg
 ./kafka-configs.sh --zookeeper $ZK --entity-type topics --entity-name $TOPIC --alter --add-config 'cleanup.policy=compact'
-# Del cfg
+###### Del cfg
 ./kafka-configs.sh --zookeeper $ZK --entity-type topics --entity-name $TOPIC --alter --delete-config 'compression.type=gzip'
 
+##### Change partition leader
+!! Several ISR required !!
+###### On one single topic
+./kafka-leader-election.sh --bootstrap-server $KAFKA --election-type=[PREFERRED,UNCLEAN] --topic=$TOPIC --partition=<INT>
+###### On every topics
+./kafka-leader-election.sh --bootstrap-server $KAFKA --election-type=[PREFERRED,UNCLEAN] --all-topic-partitions

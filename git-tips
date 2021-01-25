@@ -1,0 +1,17 @@
+
+# Setup new project
+git init
+git add *
+git commit -am "Message"
+git push --set-upstream origin master
+
+# Create a dev branch, merge it with the master & delete the dev branch
+git checkout -b dev/main ## Equivalent of git branch dev/main && git checkout dev/main
+git add *
+git commit -am "Message"
+git puh --set-upstream origin dev/main
+git checkout master
+git merge dev/main
+git branch -d dev/pouet
+git push origin --delete dev/pouet
+
